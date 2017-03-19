@@ -1,0 +1,42 @@
+{% extends "normal.html" %}
+{% block title %}Log In{% endblock %}
+{% block main %}{% set showcase_sample = showcase|random %}
+    <section class="primary-section backdrop" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>Log In</h1>
+        </div>
+        <div class="series-caption">
+            <div class="wrap">
+                <p>{{ showcase_sample.name }}</p>
+            </div>
+        </div>
+    </section>
+    <form method="post" action="#">
+        {{ csrf_input }}
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        {% for error in form.non_field_errors() %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label class="label-light" for="username">Username or Email</label>
+                            <input class="form-control" type="text" name="username" id="username" required="required" value="{{ form.username.value() or '' }}">
+                            {{ form.username.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label class="label-light" for="username">Password</label>
+                            <input class="form-control" type="password" name="password" id="password" required="required">
+                            {{ form.password.errors }}
+                        </div>
+                        <div class="form-group">
+                            <input class="btn success form-control" type="submit" value="Continue">
+                        </div>
+                    </div>
+                </div>
+                <p>Don't have an account? <a href="{{ url('register') }}">Register</a></p>
+            </div>
+        </section>
+    </form>
+{% endblock %}

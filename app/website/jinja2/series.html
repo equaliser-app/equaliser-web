@@ -1,0 +1,58 @@
+{% extends "normal.html" %}
+{% block title %}Welcome{% endblock %}
+{% block main %}
+    {% set showcase_sample = showcase|random %}
+    <section class="primary-section backdrop" data-bg="{{ series.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>{{ series.name }}</h1>
+            <h2>{{ series.fixtures | first | key('start') | to_datetime | verbose_date }} -
+                {{ series.fixtures | last | key('finish') | to_datetime | verbose_date }}</h2>
+        </div>
+    </section>
+    <form method="post" action="#">
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Description</h3>
+                    </div>
+                    <div class="col-sm-8 division prose">
+                        {{ series.description | nl2br | safe }}
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% for fixture in series.fixtures %}
+            <section class="primary-section {{ loop.cycle('odd', 'even') }} fixture">
+                <div class="wrap">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h3>{{ fixture.start | unix_timestamp_weekday_day }}</h3>
+                            <p class="description">{{ fixture.start | unix_timestamp_time_24hr }} - {{ fixture.finish | unix_timestamp_time_24hr }}</p>
+                            <p class="description">{{ fixture.venue.address }}, {{ fixture.venue.postcode }}</p>
+                        </div>
+                        <div class="col-sm-8 division">
+                            {% for tier in fixture.tiers %}
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p>{{ tier.name }}</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <p>£{{ '%0.2f'| format(tier.price| float ) }} <span>each</span></p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {% if tier.available %}
+                                            <a class="btn success" href="{{ url('order', args=[fixture.id, tier.id]) }}">Buy</a>
+                                        {% else %}
+                                            <a class="btn warning" href="{{ url('order', args=[fixture.id, tier.id]) }}">Wait</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% endfor %}
+    </form>
+{% endblock %}

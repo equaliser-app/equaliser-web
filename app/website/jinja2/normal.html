@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+    <body>
+        <header class="global-header clearfix">
+            <div class="global-header-left clearfix">
+                <a class="global-header-left-logo" href="/">
+                    <img alt="Equaliser" src="{{ static('img/equaliser.svg') }}">
+                </a>
+            </div>
+            <div class="global-header-right clearfix">
+                <a class="global-header-menu-item" href="#">Series</a>
+                <a class="global-header-menu-item" href="#">Venues</a>
+                <a class="global-header-menu-item" href="#">Partners</a>
+                <a class="global-header-menu-item" href="#">About</a>
+                {% if user %}
+                    <a class="global-header-menu-item profile" href="{{ url('account') }}">
+                        <img alt="{{ user.forename }} {{ user.surname }}" src="{{ user.photo_url }}">
+                    </a>
+                {% else %}
+                    <a class="global-header-menu-item login" href="{{ url('login') }}">Log In</a>
+                {% endif %}
+            </div>
+        </header>
+        {% block main %}{% endblock %}
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script type="text/javascript" src="{{ static('lib/slick/slick.min.js') }}"></script>
+        <script type="text/javascript" src="{{ static('scripts.js') }}"></script>
+    </body>
+{% endblock %}

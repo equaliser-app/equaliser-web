@@ -1,0 +1,60 @@
+{% extends "normal.html" %}
+{% block title %}Welcome{% endblock %}
+{% block main %}
+    {% set showcase_sample = showcase|random %}
+    <section class="primary-section backdrop homepage" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <div class="brand">
+                <h1>Equaliser</h1>
+                <p>Fair to fans. Convenient for organisers. The end of the touting industry.</p>
+            </div>
+        </div>
+        <div class="series-caption">
+            <div class="wrap">
+                <p>{{ showcase_sample.name }}</p>
+            </div>
+        </div>
+    </section>
+    <section class="primary-section even music">
+        <div class="wrap">
+            <h2>Music <span>The latest from award-winning artists</span></h2>
+        </div>
+        <div class="carousel">
+            {% for item in music %}
+            <div class="series-tile" data-bg="{{ item.images[0].sizes[0].url }}">
+                <a href="{{ url('series', args=[item.id]) }}">
+                    <p>{{ item.name }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="primary-section odd theatre-arts">
+        <div class="wrap">
+            <h2>Theatre & Arts <span>From The Royal Opera House to Broadway</span></h2>
+        </div>
+        <div class="carousel">
+            {% for item in theatre %}
+            <div class="series-tile" data-bg="{{ item.images[0].sizes[0].url }}">
+                <a href="{{ url('series', args=[item.id]) }}">
+                    <p>{{ item.name }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="primary-section even sports">
+        <div class="wrap">
+            <h2>Sports <span>Have a fighting chance of seeing your favourite team</span></h2>
+        </div>
+        <div class="carousel">
+            {% for item in sports %}
+            <div class="series-tile" data-bg="{{ item.images[0].sizes[0].url }}">
+                <a href="{{ url('series', args=[item.id]) }}">
+                    <p>{{ item.name }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

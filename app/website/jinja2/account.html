@@ -1,0 +1,93 @@
+{% extends "normal.html" %}
+{% block title %}Verification{% endblock %}
+{% block main %}{% set showcase_sample = showcase|random %}
+    <section class="primary-section backdrop" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>Account</h1>
+        </div>
+        <div class="series-caption">
+            <div class="wrap">
+                <p>{{ showcase_sample.name }}</p>
+            </div>
+        </div>
+    </section>
+    <form method="post" action="#">
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>About You</h3>
+                        <p class="description">The details we hold about you.</p>
+                    </div>
+                    <div class="col-sm-8 division">
+                        <div class="col-sm-4">
+                            <h4>Name</h4>
+                            <p>{{ user.forename }} {{ user.surname }}</p>
+                            <h4>Email</h4>
+                            <p>{{ user.email }}</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <h4>Phone</h4>
+                            <p>{{ user.phone }}</p>
+                            <h4>Username</h4>
+                            <p>{{ user.username }}</p>
+                        </div>
+                        <div class="col-sm-4">
+                            <img alt="{{ user.forename }} {{ user.surname }}" src="{{ user.photo_url }}" class="account-portrait">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section odd">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Security Log</h3>
+                        <p class="description">Check for any suspicious activity on your account.</p>
+                    </div>
+                    <div class="col-sm-8 division">
+                        <div class="row headings">
+                            <div class="col-sm-4">
+                                <h4>Name</h4>
+                            </div>
+                            <div class="col-sm-4">
+                                <h4>IP Address</h4>
+                            </div>
+                            <div class="col-sm-4">
+                                <h4>Timestamp</h4>
+                            </div>
+                        </div>
+                        {% for event in security_events %}
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p>{{ event.type.name }}</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <p>{{ event.ip }}</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <p>{{ event.timestamp | format_unix_timestamp }}<p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Mobile App</h3>
+                        <p class="description">Login to the Equaliser mobile app by scanning the QR code shown here.</p>
+
+                    </div>
+                    <div class="col-sm-8 division-align">
+                        <a id="get-ephemeral-token" href="#" class="btn default">Generate code</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}

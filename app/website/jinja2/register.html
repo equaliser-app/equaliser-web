@@ -1,0 +1,103 @@
+{% extends "normal.html" %}
+{% block title %}Log In{% endblock %}
+{% block main %}{% set showcase_sample = showcase|random %}
+    <section class="primary-section backdrop" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>Register</h1>
+        </div>
+        <div class="series-caption">
+            <div class="wrap">
+                <p>{{ showcase_sample.name }}</p>
+            </div>
+        </div>
+    </section>
+    <form method="post" action="#" enctype="multipart/form-data">
+        {{ csrf_input }}
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h3>About You</h3>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <label class="label-light" for="forename">Forename</label>
+                            <input class="form-control" type="text" name="forename" id="forename" required="required" placeholder="John" value="{{ form.forename.value() or '' }}">
+                            {{ form.forename.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label class="label-light" for="surname">Surname</label>
+                            <input class="form-control" type="text" name="surname" id="surname" required="required" placeholder="Smith" value="{{ form.surname.value() or '' }}">
+                            {{ form.surname.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label class="label-light" for="email">Email</label>
+                            <input class="form-control" type="text" name="email" id="email" required="required" placeholder="john.smith@example.com" value="{{ form.email.value() or '' }}">
+                            {{ form.email.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label class="label-light" for="phone">Phone Number</label>
+                            <input class="form-control" type="text" name="phone" id="phone" required="required" placeholder="With area code, e.g. +44 7528 572988" value="{{ form.phone.value() or '' }}">
+                            <p class="help-block">Spaces are ignored</p>
+                            {{ form.phone.errors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section odd">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h3>Photo</h3>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <label class="label-light" for="photo">Equaliser requires an up-to-date passport style photo of all account holders. This will be verified upon entrance to venues, and helps Equaliser keep out touts.</label>
+                            <input class="form-control" type="file" name="photo" id="photo" required="required">
+                            <p class="help-block">JPEG only, minimum 500px x 500px. Your picture will look better if it is square.</p>
+                            {{ form.photo.errors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h3>Credentials</h3>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="form-group">
+                            <label class="label-light" for="username">Username</label>
+                            <input class="form-control" type="text" name="username" id="username" required="required" value="{{ form.username.value() or '' }}">
+                            <p class="help-block">Minimum 2 characters. Alphanumeric only.</p>
+                            {{ form.username.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label class="label-light" for="username">Password</label>
+                            <input class="form-control" type="password" name="password" id="password" required="required">
+                            <p class="help-block">Must contain at least one letter, number and symbol, and be at least 12 characters long. We recommend the use of a password manager.</p>
+                            {{ form.password.errors }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section odd">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-9 col-sm-offset-3">
+                        {% for error in form.non_field_errors() %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                        <div class="form-group">
+                            <input class="btn success form-control" type="submit" value="Continue">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}
