@@ -79,7 +79,7 @@ class RestrictedFileField(forms.FileField):
 
 class LoginForm(Form):
 
-    username = forms.CharField()
+    username = forms.CharField(max_length=16)
     password = forms.CharField()
 
     def __init__(self, request, *args, **kwargs):
@@ -121,10 +121,10 @@ class VerificationForm(Form):
 
 class RegisterForm(Form):
 
-    forename = forms.CharField()
-    surname = forms.CharField()
-    email = forms.EmailField()
-    phone = formfields.PhoneNumberField(max_length=20)
+    forename = forms.CharField(max_length=128)
+    surname = forms.CharField(max_length=128)
+    email = forms.EmailField(max_length=256)
+    phone = formfields.PhoneNumberField(max_length=15)
     photo = RestrictedFileField(max_size=RestrictedFileField.MB * 5,
                                 content_types=RestrictedFileField.JPEG)
     username = forms.CharField(min_length=2, validators=[_ALPHANUMERIC])
