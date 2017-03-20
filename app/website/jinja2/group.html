@@ -1,0 +1,134 @@
+{% extends "normal.html" %}
+{% block title %}Group - {{ group.fixture.series.name }}{% endblock %}
+{% block main %}
+    <section class="primary-section backdrop" data-bg="{{ group.fixture.series.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>{{ group.fixture.series.name }}</h1>
+            <h2>{{ group.my_status | title }}</h2>
+        </div>
+    </section>
+    <section class="primary-section even">
+        <div class="wrap">
+            <div class="row">
+                {# TODO: Not all cases are accounted for here - remember you can be group leader, group payee, or an attendee, or all 3. You can also have guests. #}
+                {% if group.my_status == 'WAITING' %}
+                    <div class="col-sm-4">
+                        <h3>Waiting</h3>
+                        {% if group.tiers | length > 1 %}
+                        <p>You're in the queue for {{ group.tiers | length }} tiers.</p>
+                        {% else %}
+                        <p>You're in the queue for 1 tier.</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-8 division">
+                        {% if user_is_leader or user_is_payee %}
+                            <p>Unfortunately, the tickets you've requested are currently sold out. Rest assured you're in the waiting list, and will receive a notification if and when you reach the front.</p>
+                            {% if user_is_leader %}
+                                <p>To increase your chances of obtaining tickets, you may select other tiers to wait for.</p>
+                                <a class="btn default" href="{{ url('group-tiers', args=[group.id]) }}">Select tiers</a>
+                            {% endif %}
+                        {% elif user_is_attendee %}
+                            <p>Unfortunately, the tickets requested are currently sold out. Rest assured you're in the waiting list, and your group payee will receive a notification if and when you reach the front.</p>
+                        {% endif %}
+                        <a class="btn red" href="#">Withdraw</a>
+                    </div>
+                {% elif group.my_status == 'OFFER' %}
+                    <div class="col-sm-4">
+                        <h3>Go! Go! Go!</h3>
+                        {% if user_is_payee %}
+                            <p class="description">You've received an offer to attend this event.</p>
+                        {% else %}
+                            <p class="description">Hurry - the person in charge of this group needs to pay soon or the offer will expire!</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-8 division">
+                        {% if user_is_payee %}
+                            <p>Tickets for your group have been reserved. If you do not complete payment before the offer expires, you will lose the tickets for those in your payment group, and your
+                                place in the waiting list. Tickets expire on {{ group.offer.expires | to_datetime | verbose_date }} at {{ group.offer.expires | unix_timestamp_time_24hr }}, in:</p>
+                            <p class="countdown" data-deadline="{{ group.offer.expires }}"></p>
+                            <a class="btn success" href="{{ url('group-pay', args=[group.id]) }}">Accept and Pay</a>
+                            <a class="btn red" href="#">Decline</a>
+                        {% else %}
+                            <p>Tickets for your group have been reserved. Heckle your payee to complete checkout in:</p>
+							<p class="countdown" data-deadline="{{ group.offer.expires }}"></p>
+                        {% endif %}
+                    </div>
+                {% elif group.my_status == 'COMPLETE' %}
+                    <div class="col-sm-4">
+                        <h3>You're going!</h3>
+                        <p class="description">Your tickets are confirmed.</p>
+                    </div>
+                    <div class="col-sm-8 division">
+                        {% if user_is_attendee %}
+                        <h4>{{ group.offer.tier.name }}</h4>
+                        <p>Just take your phone with you to gain access to the venue. Have a great time, and thanks for using Equaliser!</p>
+                        {% endif %}
+                        <p>
+                        {% if user_is_attendee %}
+                            <a class="btn default" href="{{ url('series', args=[group.fixture.series.id]) }}">Go to series</a>
+                        {% endif %}
+                        {% if user_is_payee %}
+                            <a class="btn warning" href="#">Refund</a>
+                        {% endif %}
+                        </p>
+                    </div>
+                {% elif group.my_status == 'EXPIRED' %}
+                    <div class="col-sm-4">
+                        <h3>Too late!</h3>
+                        <p class="description">Sorry, these tickets have expired.</p>
+                    </div>
+                    <div class="col-sm-8 division">
+                        {% if user_is_payee %}
+                            <p>Ticket offers must be completed in 10 minutes, otherwise they are offered to the next group in the waiting list.
+                            Your offer expired on {{ group.offer.expires | to_datetime | verbose_date }} at {{ group.offer.expires | unix_timestamp_time_24hr }}.</p>
+                        {% else %}
+                            <p>Ticket offers must be completed in 10 minutes, otherwise they are offered to the next group in the waiting list.
+                                Your payment group leader did not complete checkout by the offer's expiry on {{ group.offer.expires | to_datetime | verbose_date }} at {{ group.offer.expires | unix_timestamp_time_24hr }}.</p>
+                        {% endif %}
+                        <p>If you would like to try again for tickets, you may place another order.</p>
+                        <p>
+                            <a class="btn success" href="{{ url('series', args=[group.fixture.series.id]) }}">Go to series</a>
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% for payment_group in group.paymentGroups %}
+        <section class="primary-section {{ loop.cycle('odd', 'even') }} order">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Payment Group #{{ loop.index }}</h3>
+                        {% if payment_group.resolved_status == 'WAITING' %}
+                            <p class="description">Status: <span class="waiting">Waiting</span></p>
+                            <p class="description">Waiting for tickets to be allocated.</p>
+                        {% elif payment_group.resolved_status == 'OFFER' %}
+                            <p class="description">Status: <span class="offer">Offer</span></p>
+                            {% if payment_group.payee.username == user.username %}
+                                {% if payment_group.attendees | length > 1 or payment_group.attendees[0].username != user.username  %}
+                                    <p class="description">Hurry - others in this group are relying on you!</p>
+                                {% endif %}
+                            {% else %}
+                                <p class="description">Hurry - the person in charge of this group needs to pay soon or its members will not be joining you!</p>
+                            {% endif %}
+                        {% elif payment_group.resolved_status == 'COMPLETE' %}
+                            <p class="description">Status: <span class="complete">Complete</span></p>
+                        {% elif payment_group.resolved_status == 'EXPIRED' %}
+                            <p class="description">Status: <span class="expired">Expired</span></p>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-8 division">
+                        <ol class="attendee-list">
+                            {% for attendee in payment_group.attendees %}
+                            <li>
+                                <p>{{ attendee.forename }} {{ attendee.surname }} <span>{{ attendee.username }}</span></p>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endfor %}
+{% endblock %}

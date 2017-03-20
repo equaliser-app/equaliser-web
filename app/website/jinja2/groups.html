@@ -1,0 +1,41 @@
+{% extends "normal.html" %}
+{% block title %}Groups{% endblock %}
+{% block main %}
+    {% set showcase_sample = showcase|random %}
+    <section class="primary-section backdrop" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>Groups</h1>
+        </div>
+        <div class="series-caption">
+            <div class="wrap">
+                <p>{{ showcase_sample.name }}</p>
+            </div>
+        </div>
+    </section>
+    {% for group in groups %}
+    <section class="primary-section {{ loop.cycle('even', 'odd') }}">
+        <div class="wrap">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h3>Group #{{ group.id }}</h3>
+                    {% if group.my_status == 'WAITING' %}
+                    <p class="description">Status: <span class="waiting">Waiting</span></p>
+                    {% elif group.my_status == 'OFFER' %}
+                    <p class="description">Status: <span class="offer">Offer</span></p>
+                    {% elif group.my_status == 'COMPLETE' %}
+                    <p class="description">Status: <span class="complete">Complete</span></p>
+                    {% elif group.my_status == 'EXPIRED' %}
+                    <p class="description">Status: <span class="expired">Expired</span></p>
+                    {% endif %}
+                </div>
+                <div class="col-sm-8 division">
+                    <h4><a href="{{ url('group', args=[group.id]) }}">{{ group.fixture.series.name }}</a></h4>
+                    <p>{{ group.fixture.start | to_datetime | verbose_date }} <span>
+                        {{ group.fixture.start | unix_timestamp_time_24hr }} - {{ group.fixture.finish | unix_timestamp_time_24hr }}</span></p>
+                    <p>{{ group.fixture.venue.name }}, {{ group.fixture.venue.address }}, {{ group.fixture.venue.postcode }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endfor %}
+{% endblock %}

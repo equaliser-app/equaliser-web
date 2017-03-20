@@ -66,3 +66,46 @@ class Session:
     @staticmethod
     def from_json(json):
         return Session(User.from_json(json['user']), json['token'])
+
+
+# status for a user for a group
+def user_group_status(group, username):
+    if group['status'] == 'WAITING':
+        return 'WAITING'
+
+    # an offer has been made; have we accepted ours?
+    for payment_group in group['paymentGroups']:
+        usernames = [attendee['username']
+                     for attendee in payment_group['attendees']]
+        if payment_group['payee']['username'] == username or \
+                username in usernames:
+            # we are payee or attendee for this group...
+            status = payment_group['status']
+            if status == 'INHERIT':
+                return 'OFFER'
+            if status == 'COMPLETE':
+                return 'COMPLETE'
+            if status == 'EXPIRED':
+                return 'EXPIRED'
+
+    assert False
+
+
+# status for a payment group
+def payment_group_status(group, payment_group_id):
+    if group['status'] == 'WAITING':
+        return 'WAITING'
+
+    for payment_group in group['paymentGroups']:
+        id_ = payment_group['id']
+        if id_ != payment_group_id:
+            continue
+        status = payment_group['status']
+        if status == 'INHERIT':
+            return 'OFFER'
+        if status == 'COMPLETE':
+            return 'COMPLETE'
+        if status == 'EXPIRED':
+            return 'EXPIRED'
+
+    assert False

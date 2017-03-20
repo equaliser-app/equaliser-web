@@ -1,0 +1,25 @@
+{% extends "normal.html" %}
+{% block title %}Pay - {{ group.fixture.series.name }}{% endblock %}
+{% block main %}
+    <section class="primary-section backdrop" data-bg="{{ group.fixture.series.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>Pay</h1>
+            <h2>{{ group.fixture.series.name }}</h2>
+        </div>
+    </section>
+    <form method="post" action="#">
+        {{ csrf_input }}
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <p>Normally we'd take some card details from you here...</p>
+                        <div class="form-group">
+                            <input class="btn success form-control" type="submit" value="Pay">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}

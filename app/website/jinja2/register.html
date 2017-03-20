@@ -1,6 +1,7 @@
 {% extends "normal.html" %}
-{% block title %}Log In{% endblock %}
-{% block main %}{% set showcase_sample = showcase|random %}
+{% block title %}Register{% endblock %}
+{% block main %}
+    {% set showcase_sample = showcase|random %}
     <section class="primary-section backdrop" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
         <div class="wrap">
             <h1>Register</h1>
@@ -78,7 +79,7 @@
                         <div class="form-group">
                             <label class="label-light" for="username">Password</label>
                             <input class="form-control" type="password" name="password" id="password" required="required">
-                            <p class="help-block">Must contain at least one letter, number and symbol, and be at least 12 characters long. We recommend the use of a password manager.</p>
+                            <p class="help-block">Must be at least 8 characters long. We recommend the use of a password manager.</p>
                             {{ form.password.errors }}
                         </div>
                     </div>

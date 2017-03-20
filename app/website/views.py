@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.views import View
 from django.shortcuts import render
 from website import api, forms
+from website import models
+from website.models import Session
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +164,7 @@ class EphemeralToken(View):
         return HttpResponse(response.raw.read(), content_type='image/png')
 
 
+# noinspection PyMethodMayBeStatic
 class Series(View):
     # noinspection PyShadowingBuiltins
     def get(self, request, id):
@@ -172,5 +175,203 @@ class Series(View):
         })
 
 
+# noinspection PyMethodMayBeStatic
 class Order(View):
-    pass
+    def get(self, request, fixture, tier):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        fixture_json = api.get(request, '/fixtures/' + fixture)
+
+        fixture = int(fixture)
+        tier = int(tier)
+        logger.debug('Searching for fixture %d and tier %d', fixture, tier)
+
+        tier_ = None
+        for sample in fixture_json['tiers']:
+            logger.debug('Trying %d', sample['id'])
+            if sample['id'] == tier:
+                tier_ = sample
+                break
+
+        if not tier_:
+            return HttpResponseRedirect(reverse('index'))
+
+        return render(request, 'place-order.html', {
+            'user': request.session['session']['user'],
+            'fixture': fixture_json,
+            'tier': tier_
+        })
+
+    def post(self, request, fixture, tier):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        logger.debug('Received order POST: fixture: %s, tier: %s, data: %s',
+                     fixture, tier, request.POST)
+        attendees = request.POST.getlist('attendees[]')
+        logger.debug('Attendees: %s', attendees)
+        guests = request.POST.getlist('guests[]')
+        logger.debug('Guests: %s', attendees)
+        fixture_json = api.get(request, '/fixtures/' + fixture)
+
+        fixture = int(fixture)
+        tier = int(tier)
+        logger.debug('Searching for fixture %d and tier %d', fixture, tier)
+
+        tier_ = None
+        for sample in fixture_json['tiers']:
+            logger.debug('Trying %d', sample['id'])
+            if sample['id'] == tier:
+                tier_ = sample
+                break
+
+        if not tier_:
+            return HttpResponseRedirect(reverse('index'))
+
+        try:
+            result = api.post(request, '/group/create', {
+                'tierId': tier,
+                'attendees': attendees,
+                'guests': guests
+            })
+
+            logger.debug('Create group result: %s', result)
+
+            return HttpResponseRedirect(
+                reverse('group', kwargs={'id': result['group']['id']}))
+        except RuntimeError:
+            return HttpResponseRedirect(reverse('index'))
+
+
+# noinspection PyMethodMayBeStatic
+class Groups(View):
+    def get(self, request):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        session = Session.from_session(request.session)
+
+        groups = api.get(request, '/group/list')
+        logger.debug('Received %d groups', len(groups))
+        for group in groups:
+            # from my perspective
+            group['my_status'] = \
+                models.user_group_status(group, session.user.username)
+
+        return render(request, 'groups.html', {
+            'showcase': api.get(request, '/series/showcase'),
+            'user': request.session['session']['user'],
+            'groups': groups
+        })
+
+
+# noinspection PyMethodMayBeStatic
+class Group(View):
+    # noinspection PyShadowingBuiltins
+    def get(self, request, id):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        session = Session.from_session(request.session)
+
+        group = api.get(request, '/group/' + id)
+        group['my_status'] = models.user_group_status(
+            group, session.user.username)
+
+        user_is_leader = group['leader']['username'] == session.user.username
+        user_is_payee = False
+        user_is_attendee = False
+
+        # TODO this should be done by the api, not us
+        for payment_group in group['paymentGroups']:
+            payment_group['resolved_status'] = \
+                models.payment_group_status(group, payment_group['id'])
+            if payment_group['payee']['username'] == session.user.username:
+                user_is_payee = True
+            for attendee in payment_group['attendees']:
+                if attendee['username'] == session.user.username:
+                    user_is_attendee = True
+
+        logger.debug('is_leader: %s', user_is_leader)
+        logger.debug('is_payee: %s', user_is_payee)
+        logger.debug('is_attendee: %s', user_is_attendee)
+
+        return render(request, 'group.html', {
+            'showcase': api.get(request, '/series/showcase'),
+            'user': request.session['session']['user'],
+            'group': group,
+            'user_is_leader': user_is_leader,
+            'user_is_payee': user_is_payee,
+            'user_is_attendee': user_is_attendee
+        })
+
+
+# noinspection PyMethodMayBeStatic,PyShadowingBuiltins
+class GroupPay(View):
+    def get(self, request, id):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        # TODO validation
+
+        group = api.get(request, '/group/' + id)
+        return render(request, 'pay.html', {
+            'user': request.session['session']['user'],
+            'group': group
+        })
+
+    def post(self, request, id):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        group = api.get(request, '/group/' + id)
+        try:
+            result = api.post(request, '/group/' + id + '/pay', {})
+            return HttpResponseRedirect(reverse('group',
+                                                kwargs={'id': group['id']}))
+        except RuntimeError:
+            return HttpResponseRedirect(reverse('groups'))
+
+
+# noinspection PyMethodMayBeStatic,PyShadowingBuiltins
+class GroupTiers(View):
+    def get(self, request, id):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        session = Session.from_session(request.session)
+
+        group = api.get(request, '/group/' + id)
+        if group['leader']['username'] != session.user.username:
+            return HttpResponseRedirect(reverse('index'))
+
+        selected_tiers = group['tiers']
+        selected_tier_ids = [tier['id'] for tier in selected_tiers]
+        unselected_tiers = [tier for tier in group['fixture']['tiers']
+                            if tier['id'] not in selected_tier_ids]
+        unselected_tiers = sorted(unselected_tiers, key=lambda e: e['id'])
+        logger.debug('Selected tiers: %s', selected_tiers)
+        logger.debug('Remaining tiers: %s', unselected_tiers)
+
+        return render(request, 'tier-selection.html', {
+            'user': request.session['session']['user'],
+            'group': group,
+            'selected_tiers': selected_tiers,
+            'unselected_tiers': unselected_tiers
+        })
+
+    def post(self, request, id):
+        if 'session' not in request.session:
+            return HttpResponseRedirect(reverse('index'))
+
+        priorities = {field: request.POST[field] for field in request.POST
+                      if field != 'csrfmiddlewaretoken'}
+        logger.debug('Priorities: %s', priorities)
+
+        try:
+            result = api.post(request, '/group/' + id + '/tiers', priorities)
+            return HttpResponseRedirect(reverse('group',
+                                                kwargs={'id': id}))
+        except RuntimeError:
+            return HttpResponseRedirect(reverse('groups'))

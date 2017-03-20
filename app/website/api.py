@@ -29,7 +29,7 @@ def get_kwargs(request, endpoint):
 
 def get_result(response):
     json = response.json()
-    logger.debug('Parsed API result: %s', json)
+    #logger.debug('Parsed API result: %s', json)
     if not json['success']:
         raise RuntimeError(json['message'])
     return json['result']

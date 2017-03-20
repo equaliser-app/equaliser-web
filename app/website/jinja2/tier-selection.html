@@ -1,0 +1,78 @@
+{% extends "normal.html" %}
+{% block title %}Tiers - {{ group.fixture.series.name }}{% endblock %}
+{% block main %}
+    <section class="primary-section backdrop" data-bg="{{ group.fixture.series.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>{{ group.fixture.series.name }}</h1>
+            <h2><p>{{ group.fixture.start | to_datetime | verbose_date }},
+                {{ group.fixture.start | unix_timestamp_time_24hr }} - {{ group.fixture.finish | unix_timestamp_time_24hr }}</p></h2>
+        </div>
+    </section>
+    <form method="post" action="#">
+        {{ csrf_input }}
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Tiers</h3>
+                    </div>
+                    <div class="col-sm-8 division">
+                        <p>Each fixture has a single waiting list, however you will only be allocated tickets for the tiers you are interested in.
+                            Be warned: a group only receives a single offer, which could be for any of the selected tiers, so only choose those you
+                            would accept. If you reject an offer, you rejoin the back of the waiting list.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section odd order">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Selection</h3>
+                        <p class="description">Click and drag to order tiers in terms of preference, highest first.</p>
+                        <p class="description">Joined: <span id="tier-count">{{ selected_tiers | length }}</span></p>
+                    </div>
+                    <div class="col-sm-8 division">
+                        <ol class="tier-list">
+                            {% for tier in selected_tiers %}
+                            <li>
+                                <div class="row" data-tier-id="{{ tier.id }}">
+                                    <div class="col-sm-4">
+                                        <p>{{ tier.name }} <span>£{{ '%0.2f'| format(tier.price | float ) }}</span></p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <a class="btn success checked">Leave</a>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                            {% for tier in unselected_tiers %}
+                            <li>
+                                <div class="row" data-tier-id="{{ tier.id }}">
+                                    <div class="col-sm-4">
+                                        <p>{{ tier.name }} <span>£{{ '%0.2f'| format(tier.price | float ) }}</span></p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <a class="btn success">Join</a>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-4 division-align">
+                        <div class="form-group">
+                            <input id="tiers-submit" class="btn success form-control" type="submit" value="Save">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}

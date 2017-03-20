@@ -164,12 +164,12 @@ form .description {
 	color: #ccc;
 }
 
-.description > .complete {
-	color: #00dc00;
+.description > .offer {
+	color: #cdd200;
 }
 
-.description > .offered {
-	color: #cdd200;
+.description > .complete {
+	color: #00dc00;
 }
 
 .description > .expired {
@@ -255,7 +255,7 @@ form .description {
     font-weight: 400;
     padding: .5em 1em;
     background-color: #fff;
-    border-color: #e5e5e5;
+	border: 1px solid transparent;
     color: rgba(0,0,0,0.85);
 	transition: background-color 100ms linear, border-color 100ms linear, color 100ms linear, box-shadow 100ms linear;
 	    display: inline-block;
@@ -263,21 +263,28 @@ form .description {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
     line-height: 1.42857143;
-    border-radius: 3px;
     user-select: none;
 	margin-top: 1em;
 }
+
+	.btn:link, .btn:visited {
+		color: rgba(0,0,0,0.85);
+		text-decoration: none;
+	}
 
 	.btn.success, .btn.success:hover {
 	    background-color: #33a260;
 		border-color: #2d8f54;
 		color: #fff !important;
 	}
-	
+
 		.btn.success:hover {
 			background-color: #309c5c;
+		}
+
+		.btn.success.checked {
+			background-color: #83b597;
 		}
 
 	.btn.warning {
@@ -293,16 +300,16 @@ form .description {
 		}
 
 		.btn.warning:hover, .btn.warning:active {
-			background-color:#f25304;
-			background-image:none;
+			background-color: #f25304;
+			background-image: none;
 			border-color:#cf4704;
 			color:#fff;
 		}
-		
+
 		.btn.warning.checked {
 			background-color: #ffaa7f;
 		}
-	
+
 	.btn.red {
 		background-color: #e52c5a;
 		border-color: #dc1b4b;
@@ -321,29 +328,29 @@ form .description {
 			border-color: #af163c;
 			color: #fff;
 		}
-	
+
 	.btn.cancel {
 		float: right;
 	}
-	
-	.btn:link, .btn:visited {
-		color: rgba(0,0,0,0.85);
-		text-decoration: none;
-	}
-	
+
 	.btn:hover, .btn:focus {
 		background-color: #f0f0f0;
 		border-color: #e3e3e3;
 		color: rgba(0,0,0,0.85);
 	}
-	
+
 	.fixture .btn, .order .btn {
 		width: 75px;
 		margin-top: 0;
 	}
-	
+
 	.btn + .btn {
 		margin-left: .5em;
+	}
+
+	#add-member {
+		height: 3.4em;
+		line-height: 2.2;
 	}
 
 .primary-section {
@@ -418,11 +425,11 @@ form .description {
 .backdrop {
 	background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
 	background-repeat: no-repeat;
-    background-position: 50% 20%;
+    background-position: 50% 40%;
 	background-size: cover;
 	min-height: 300px;
 	position: relative;
-	text-shadow: 0px 0px 5px #888;
+	text-shadow: 0px 0px 10px #555;
 }
 
 	.backdrop .container {
@@ -466,8 +473,9 @@ form .description {
 	}
 	
 	/* TODO find a way of getting these to fill their parent .series-tile, then make the background dim and text appear on hover */
-	.carousel .series-tile a{
+	.carousel .series-tile a {
 		display: block;
+    	text-align: center;
 	}
 	
 	.slick-prev {
@@ -539,13 +547,13 @@ form .description {
 		color: #bbb;
 	}
 
-.attendee-list { /* ol */
-	
+.attendee-list li, .tier-list li {
+	list-style-type: none;
+	margin-bottom: 1em;
 }
 
-	.attendee-list li {
-	    list-style-type: none;
-		margin-bottom: 1em;
+	.tier-list li {
+		cursor: ns-resize;
 	}
 
 .col-sm-1,

@@ -1,7 +1,6 @@
 {% extends "normal.html" %}
-{% block title %}Welcome{% endblock %}
+{% block title %}Series{% endblock %}
 {% block main %}
-    {% set showcase_sample = showcase|random %}
     <section class="primary-section backdrop" data-bg="{{ series.images[0].sizes[1].url }}">
         <div class="wrap">
             <h1>{{ series.name }}</h1>
@@ -14,7 +13,7 @@
             <div class="wrap">
                 <div class="row">
                     <div class="col-sm-4">
-                        <h3>Description</h3>
+                        <h3>About</h3>
                     </div>
                     <div class="col-sm-8 division prose">
                         {{ series.description | nl2br | safe }}
@@ -29,7 +28,7 @@
                         <div class="col-sm-4">
                             <h3>{{ fixture.start | unix_timestamp_weekday_day }}</h3>
                             <p class="description">{{ fixture.start | unix_timestamp_time_24hr }} - {{ fixture.finish | unix_timestamp_time_24hr }}</p>
-                            <p class="description">{{ fixture.venue.address }}, {{ fixture.venue.postcode }}</p>
+                            <p class="description">{{ fixture.venue.name }}, {{ fixture.venue.address }}, {{ fixture.venue.postcode }}</p>
                         </div>
                         <div class="col-sm-8 division">
                             {% for tier in fixture.tiers %}
@@ -40,6 +39,7 @@
                                     <div class="col-sm-4">
                                         <p>£{{ '%0.2f'| format(tier.price| float ) }} <span>each</span></p>
                                     </div>
+                                    {% if user %}
                                     <div class="col-sm-4">
                                         {% if tier.available %}
                                             <a class="btn success" href="{{ url('order', args=[fixture.id, tier.id]) }}">Buy</a>
@@ -47,6 +47,7 @@
                                             <a class="btn warning" href="{{ url('order', args=[fixture.id, tier.id]) }}">Wait</a>
                                         {% endif %}
                                     </div>
+                                    {% endif %}
                                 </div>
                             {% endfor %}
                         </div>

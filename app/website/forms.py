@@ -79,8 +79,8 @@ class RestrictedFileField(forms.FileField):
 
 class LoginForm(Form):
 
-    username = forms.CharField(validators=[_ALPHANUMERIC])
-    password = forms.CharField(min_length=6)
+    username = forms.CharField()
+    password = forms.CharField()
 
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -128,7 +128,7 @@ class RegisterForm(Form):
     photo = RestrictedFileField(max_size=RestrictedFileField.MB * 5,
                                 content_types=RestrictedFileField.JPEG)
     username = forms.CharField(min_length=2, validators=[_ALPHANUMERIC])
-    password = forms.CharField(min_length=10)
+    password = forms.CharField(min_length=8)
 
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -148,7 +148,7 @@ class RegisterForm(Form):
             'areaCode': area_code,
             'subscriberNumber': subscriber_number,
             'password': self.cleaned_data['password']
-        }, {
+        }, files={
             'photo': (photo.name, photo.file, photo.content_type)
         })
         token = result['token']['token']

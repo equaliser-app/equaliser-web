@@ -1,6 +1,7 @@
 {% extends "normal.html" %}
-{% block title %}Verification{% endblock %}
-{% block main %}{% set showcase_sample = showcase|random %}
+{% block title %}Account{% endblock %}
+{% block main %}
+    {% set showcase_sample = showcase|random %}
     <section class="primary-section backdrop" data-bg="{{ showcase_sample.images[0].sizes[1].url }}">
         <div class="wrap">
             <h1>Account</h1>

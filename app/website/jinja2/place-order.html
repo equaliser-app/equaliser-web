@@ -1,0 +1,78 @@
+{% extends "normal.html" %}
+{% block title %}{{ fixture.series.name }}{% endblock %}
+{% block main %}
+    <section class="primary-section backdrop" data-bg="{{ fixture.series.images[0].sizes[1].url }}">
+        <div class="wrap">
+            <h1>Order</h1>
+            <h2>{{ fixture.series.name }}</h2>
+        </div>
+    </section>
+    <form method="post" action="#">
+        {{ csrf_input }}
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Details</h3>
+                    </div>
+                    <div class="col-sm-8 division">
+                        <h4>Series</h4>
+                        <p>{{ fixture.series.name }}</p>
+                        <h4>Fixture</h4>
+                        <p>{{ fixture.start | to_datetime | verbose_date }}, {{ fixture.start | unix_timestamp_time_24hr }} - {{ fixture.finish | unix_timestamp_time_24hr }}</p>
+                        <p>{{ fixture.venue.address }}, {{ fixture.venue.postcode }}</p>
+                        <h4>Tier</h4>
+                        <p>{{ tier.name }} <span>£{{ '%0.2f'| format(tier.price| float ) }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="primary-section odd order">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Group</h3>
+                        <p class="description">Attendees: <span id="attendee-count">1</span></p>
+                        <p class="description">Gifts: <span id="gift-count">0</span></p>
+                    </div>
+                    <div class="col-sm-8 division">
+                        <ol class="attendee-list">
+                            <li>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p>{{ user.forename }} {{ user.surname }} <span>{{ user.username }}</span></p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <a class="btn red delete-attendee">Delete</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" id="add-member-field" placeholder="Start typing a username...">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <a id="add-member" class="btn success">Add</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>var tierId = {{ tier.id }};</script>
+        <section class="primary-section even">
+            <div class="wrap">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-4 division-align">
+                        <div class="form-group">
+                            <input id="attendees-submit" class="btn success form-control" type="submit" value="Continue">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+{% endblock %}
