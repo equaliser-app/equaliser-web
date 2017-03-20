@@ -522,7 +522,7 @@ form .description {
 		font-size: .9em;
 	}
 
-.btn, .form-control {
+.btn, .form-control, .ui-menu .ui-menu-item-wrapper {
 	font-family: 'Oswald', sans-serif;
 }
 

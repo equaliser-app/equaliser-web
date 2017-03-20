@@ -1,4 +1,4 @@
-var BACKEND = 'http://192.168.0.20:8080'
+var API_BACKEND = 'http://192.168.0.20:8080'
 
 if (user_info != null) {
     var attendees = [user_info['username']];
@@ -43,7 +43,7 @@ function add_attendee() {
     $('#add-member-field').val('');
     $.ajax({
         dataType: 'json',
-        url: BACKEND + '/usernames',
+        url: API_BACKEND + '/usernames',
         data: {'query': username},
         success: function(data, textStatus, jqXHR) {
             console.log(attendees);
@@ -134,7 +134,7 @@ $(document).ready(function() {
             var query = request.term;
             $.ajax({
                 dataType: 'json',
-                url: BACKEND + '/usernames',
+                url: API_BACKEND + '/usernames',
                 data: {'query': query},
                 success: function(data, textStatus, jqXHR) {
                     users = data['result'].map(function(elem) {
