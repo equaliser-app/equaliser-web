@@ -28,6 +28,7 @@ def get_kwargs(request, endpoint):
 
 
 def get_result(response):
+    #logger.debug(response.text)
     json = response.json()
     #logger.debug('Parsed API result: %s', json)
     if not json['success']:
@@ -46,7 +47,7 @@ def get(request, endpoint, **kwargs):
     """
     kw = get_kwargs(request, endpoint)
     kw.update(kwargs)
-    logger.debug('Sending GET requests to %s with %s', endpoint, kw)
+    logger.debug('Sending GET request to %s with %s', endpoint, kw)
 
     return get_result(
         get_requests_session().get(ENDPOINT_BASE + endpoint, **kw))
@@ -63,7 +64,7 @@ def get_binary(request, endpoint, **kwargs):
     """
     kw = get_kwargs(request, endpoint)
     kw.update(kwargs)
-    logger.debug('Sending GET requests to %s with %s', endpoint, kw)
+    logger.debug('Sending GET request to %s with %s', endpoint, kw)
 
     return get_requests_session().get(ENDPOINT_BASE + endpoint, **kw)
 
