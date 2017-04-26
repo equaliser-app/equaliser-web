@@ -1,4 +1,4 @@
-# Created by https://www.gitignore.io/api/python,pycharm,django
+# Created by https://www.gitignore.io/api/python,pycharm
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -18,7 +18,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+./lib/
 lib64/
 parts/
 sdist/
@@ -69,7 +69,7 @@ docs/_build/
 # PyBuilder
 target/
 
-# IPython Notebook
+# Jupyter Notebook
 .ipynb_checkpoints
 
 # pyenv
@@ -100,11 +100,9 @@ ENV/
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml
-.idea/dictionaries
-.idea/vcs.xml
-.idea/jsLibraryMappings.xml
 
 # Sensitive or high-churn files:
+.idea/dataSources/
 .idea/dataSources.ids
 .idea/dataSources.xml
 .idea/dataSources.local.xml
@@ -144,15 +142,5 @@ fabric.properties
 
 # *.iml
 # modules.xml
-# .idea/misc.xml 
+# .idea/misc.xml
 # *.ipr
-
-
-### Django ###
-*.log
-*.pot
-*.pyc
-__pycache__/
-local_settings.py
-db.sqlite3
-media

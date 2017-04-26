@@ -7,6 +7,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import reverse
 from django.contrib import messages
 
+from website import api
 from jinja2 import Environment, escape
 from babel.dates import format_datetime, format_timedelta
 import datetime
@@ -25,7 +26,8 @@ def environment(**options):
     env.globals.update({
         'static': staticfiles_storage.url,
         'url': reverse,
-        'get_messages': messages.get_messages
+        'get_messages': messages.get_messages,
+        'api': api.ENDPOINT_BASE
     })
     env.filters['key'] = key
     env.filters['nl2br'] = nl2br

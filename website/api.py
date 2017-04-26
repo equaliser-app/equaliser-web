@@ -1,11 +1,12 @@
 import logging
 import requests
 
+from django.conf import settings
 from website.models import Session
 
 logger = logging.getLogger(__name__)
 
-ENDPOINT_BASE = 'http://192.168.0.20:8080'
+ENDPOINT_BASE = 'http://{0}:{1}'.format(settings.API_HOST, settings.API_PORT)
 
 _REQUESTS_SESSION = None
 

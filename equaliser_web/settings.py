@@ -25,10 +25,12 @@ SECRET_KEY = 'ld*qa*5@8y93#j!l-^zbj*adlemy&l2$i5fyo!8w@nh*zw73*4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.20', '10.20.11.88',
-                 'equaliser.events', '.gebn.co.uk']
+ALLOWED_HOSTS = ['*']
 
 CSRF_COOKIE_HTTPONLY = True
+
+API_HOST = os.environ['API_HOST']
+API_PORT = os.environ['API_PORT']
 
 
 # Application definition
